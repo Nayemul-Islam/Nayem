@@ -1,0 +1,364 @@
+////// Welcome To My Own e-commerce
+#include <bits/stdc++.h>
+using namespace std;
+#define yes "yes"
+#define no "no"
+#define YES "YES"
+#define NO "NO"
+#define op()                      \
+    ios_base::sync_with_stdio(0); \
+    cin.tie(0);                   \
+    cout.tie(0);
+#define ll long long
+#define pi 3.1415926536
+ll payable_tk;
+int operation_mark;
+vector<pair<string, pair<string, int>>> product_list;
+
+class Product /// Mother Class
+{
+public:
+    string Product_Name, Product_type;
+    int Product_Price;
+};
+
+class stock_reading : Product /// Product Stock Reading Class
+{
+public:
+    stock_reading()
+    {
+        ifstream file("C:\\Users\\Nayem\\OneDrive\\Desktop\\store.txt");
+        while (getline(file, Product_type))
+        {
+            getline(file, Product_Name);
+            file >> Product_Price;
+            file.ignore();
+            product_list.push_back({Product_type, {Product_Name, Product_Price}});
+        }
+        file.close();
+    }
+};
+class update_stock : Product /// Product Updating Class for Admin
+{
+public:
+    update_stock()
+    {
+        cout << "--- Products Update Rules ---" << endl;
+        cout << "First, you add product type." << endl;
+        cout << "Second, you add product name." << endl;
+        cout << "Third, you add product price." << endl << "Plese, follow the rules." << endl;
+    }
+    void updating (int n)
+    {
+        ofstream file("C:\\Users\\Nayem\\OneDrive\\Desktop\\store.txt",ios ::app);
+
+        while(n--)
+        {
+            cin.ignore();
+            getline(cin, Product_type);
+            getline(cin, Product_Name);
+            cin >> Product_Price;
+            file << Product_type << endl << Product_Name << endl << Product_Price << endl;
+            cout << "Product Update Successfully." << endl;
+        }
+        file.close();
+    }
+};
+//////////  Book Class /////////
+
+class Book : Product
+{
+private:
+    int book_serial[1000], j = 1;
+
+public:
+    Book()
+    {
+        for (auto i : product_list)
+        {
+            if (i.first != "Book")
+                continue;
+            cout << "Book Name : " << i.second.first << endl;
+            cout << "Price : " << i.second.second << endl<< endl;
+            cout << "To buy this book, press " << j << " later." << endl<<endl;
+            book_serial[j] = i.second.second;
+            j++;
+        }
+    }
+    void buying()
+    {
+        int i;
+        cin >> i;
+        payable_tk += book_serial[i];
+    }
+};
+
+//////////  Mobile Class /////////
+
+class Mobile : Product
+{
+private:
+    int mobile_serial[1000], j = 1;
+
+public:
+    Mobile()
+    {
+        for (auto i : product_list)
+        {
+            if (i.first != "Mobile")
+                continue;
+            cout << "Mobile Name : " << i.second.first << endl;
+            cout << "Price : " << i.second.second << endl<<endl;
+            cout << "To buy this Mobile , press " << j << " later." << endl << endl;
+            mobile_serial[j] = i.second.second;
+            j++;
+        }
+    }
+    void buying()
+    {
+        int i;
+        cin >> i;
+        payable_tk += mobile_serial[i];
+
+    }
+};
+
+//////////  PC Class /////////
+
+class PC : Product
+{
+private:
+    int pc_serial[1000], j = 1;
+
+public:
+    PC()
+    {
+        for (auto i : product_list)
+        {
+            if (i.first != "PC")
+                continue;
+            cout << "PC Name : " << i.second.first << endl;
+            cout << "Price : " << i.second.second << endl<<endl;
+            cout << "To buy this PC , press " << j << " later." << endl << endl;
+            pc_serial[j] = i.second.second;
+            j++;
+        }
+    }
+    void buying()
+    {
+        int i;
+        cin >> i;
+        payable_tk += pc_serial[i];
+    }
+};
+
+class Admin
+{
+protected:
+    string password,user_id; ///Real Password,User Name;
+    string pass,id; /// For Terminal
+public:
+    Admin()
+    {
+        cout << "-------- Admin Login Panel --------" << endl;
+        pass_id_read();
+    }
+    void pass_id_read ()
+    {
+        ifstream file("C:\\Users\\Nayem\\OneDrive\\Desktop\\Admin Login.txt");
+        file >> user_id ;
+        file >> password;
+        file.close();
+    }
+    void log_in ()
+    {
+        cout << "Ener User ID : " << endl;
+        cin >> id;
+        cout << "Ener Password : " << endl;
+        cin >> pass;
+        cout << endl;
+        log_in_cheack ();
+    }
+    void log_in_cheack ()
+    {
+        if((pass == password) && (id == user_id))
+        {
+            cout << "Successfully Logged in Admin Panel." << endl << endl;
+            admin_menu ();
+        }
+        else
+        {
+            cout << "Ooops!! Invalid User Id or Passord !! Try again." << endl;
+            log_in();
+        }
+    }
+    void admin_menu ()
+    {
+        cout << "--- Welcome Admin Panel ---" << endl;
+        cout << "Product Update Press 1." << endl;
+        ///cout << "To See Profit Press 2 " << endl; Coming soon
+        ///cout << "To See Order Details Press 3" << endl; Coming soon
+        cout << "Changing Password Prees 5." << endl;
+        cin >> operation_mark ;
+        if(operation_mark == 1)
+        {
+            cout << "How Many products do you want to add ?" << endl;
+            int n ;
+            cin >> n; /// Products Numbers;
+            update_stock New_products;
+            New_products.updating(n);
+
+        }
+        else if (operation_mark == 5)
+        {
+            cout << "Enter New Password" << endl;
+            cin >> pass;
+            ofstream file("C:\\Users\\Nayem\\OneDrive\\Desktop\\Admin Login.txt");
+            file << user_id << endl << pass << endl;
+            file.close();
+            cout << "Password Change Successfully" << endl << endl;
+        }
+    }
+};
+
+class Coustomer /// Coustomer Class
+{
+protected:
+    string password,user_mail; ///Real Password,User Name;
+    string pass,mail; /// For Terminal
+public:
+    void product_buying();
+    void menu_table();
+    Coustomer ()
+    {
+        cout << "Sign in Press 1." << endl;
+        cout << "Sign up Press 2." << endl;
+        cin >> operation_mark ;
+        if(operation_mark == 1)
+        {
+            log_in();
+        }
+        else
+        {
+            add_coustomer();
+        }
+    }
+    void add_coustomer ()
+    {
+        cout << "Enter Your Mail Account : " << endl;
+        cin >> mail;
+        cout << "Set a Password : " << endl;
+        cin >> pass;
+
+        ofstream file("C:\\Users\\Nayem\\OneDrive\\Desktop\\Coustomer Login.txt",ios ::app);
+
+        file << mail << endl << pass << endl;
+        file.close();
+        cout << "Registered Successfully." << endl;
+        log_in();
+    }
+    void log_in ()
+    {
+        cout << "Ener User Mail : " << endl;
+        cin >> mail;
+        cout << "Ener Password : " << endl;
+        cin >> pass;
+        cout << endl;
+        log_in_cheack ();
+    }
+    void log_in_cheack ()
+    {
+        bool flag = false;
+        ifstream file("C:\\Users\\Nayem\\OneDrive\\Desktop\\Coustomer Login.txt");
+        while(file >> user_mail)
+        {
+            file >> password;
+            if((pass == password) && (mail == user_mail))
+            {
+                flag = true;
+                break;
+            }
+        }
+        file.close();
+        if(flag)
+        {
+            cout << "Successfully Logged in your account." << endl << endl;
+            product_buying();
+        }
+        else
+        {
+            cout << "Ooops!! Invalid User Id or Passord !! Try again." << endl;
+            log_in();
+        }
+    }
+};
+
+void Coustomer ::menu_table()
+{
+    cout << "If you want to buy a Book press 1." << endl;
+    cout << "If you want to buy a Mobile press 2." << endl;
+    cout << "If you want to buy a PC press 3. " << endl;
+
+    cin >> operation_mark;
+    if (operation_mark == 1)
+    {
+        Book new_item;
+        new_item.buying();
+    }
+    if (operation_mark == 2)
+    {
+        Mobile new_item;
+        new_item.buying();
+    }
+    if (operation_mark == 3)
+    {
+        PC new_item;
+        new_item.buying();
+    }
+}
+void Coustomer::product_buying ()
+{
+    stock_reading read;
+operation:
+    if (payable_tk)
+        cout << "Your Total bill is : " << payable_tk << endl << endl
+             << "Do you by another thing? if you buy anything press 1 otherwise press 0"
+             << endl;
+    else
+        cout << "Do you want to buy any thing? if you buy anything press 1 otherwise press 0"
+             << endl;
+
+    cin >> operation_mark;
+    if (!operation_mark)
+    {
+        if (payable_tk)
+        {
+            cout << "Your Total Bill is : " << payable_tk << endl;
+            cout << "Thank You Sir. Have a good Day" << endl;
+        }
+        return;
+    }
+    menu_table();
+    goto operation;
+}
+
+int main()
+{
+    op();
+    cout << "------------------- Welcome to Bazar -------------------"<<endl<<endl;
+    cout << "Shop Owner Press 1." << endl;
+    cout << "If you are Customer Press 2." << endl;
+    cin >> operation_mark ;
+    if(operation_mark == 1)
+    {
+        Admin admin;
+        admin.log_in();
+        cout << "Thanks Admin !!" << endl;
+        return 0;
+    }
+    else if (operation_mark == 2)
+    {
+        Coustomer coustomer;
+    }
+    return 0;
+}
